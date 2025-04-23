@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fake News Detector</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background: linear-gradient(135deg, #89f7fe, #66a6ff); display: flex; justify-content: center; align-items: center; height: 100vh;">
+
+<div style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.2); text-align: center; width: 350px;">
+  <h2 style="margin-bottom: 20px;">Fake News Detector</h2>
+  
+  <textarea id="newsText" placeholder="Enter news text..." style="width: 100%; height: 120px; margin-bottom: 20px; padding: 10px; border-radius: 10px; border: 1px solid #ccc; resize: none;"></textarea><br>
+  
+  <button onclick="predict()" style="padding: 12px 25px; background: #4CAF50; color: white; border: none; border-radius: 10px; font-size: 16px; cursor: pointer;">Predict</button>
+  
+  <div id="result" style="margin-top: 25px; font-size: 22px; font-weight: bold;"></div>
+</div>
+
+<script>
+function predict() {
+    const text = document.getElementById('newsText').value;
+
+    fetch('/predict', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({text: text})
+    })
+    .then(response => response.json())
+    .then(data => {
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerText = "Prediction: " + data.prediction;
+        
+        if (data.prediction === "Real") {
+            document.body.style.background = "linear-gradient(135deg, #a8ff78, #78ffd6)"; // greenish
+        } else if (data.prediction === "Fake") {
+            document.body.style.background = "linear-gradient(135deg, #ff6a6a, #ff9966)"; // reddish
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+</script>
+
+</body>
+</html>
